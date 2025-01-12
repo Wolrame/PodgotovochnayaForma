@@ -25,18 +25,18 @@ namespace PodgotovochnayaForma
             public Thread thr;
             void ThreadFunc()
             {
-                while (flag<=4 || inCube)
+                while (true)
                 {
-                    if (x < 0 || x > 200) xSpeed = -xSpeed;
-                    if (y < 0 || y > 200) ySpeed = -ySpeed;
-                    //здесь пересчитываем координаты
-                    x += xSpeed;
-                    y += ySpeed;
-                    Thread.Sleep(100);//спим
-                    dl();
-
+                    if(inCube||(flag<4)){
+                        if (x < 0 || x > 200) xSpeed = -xSpeed;
+                        if (y < 0 || y > 200) ySpeed = -ySpeed;
+                        //здесь пересчитываем координаты
+                        x += xSpeed;
+                        y += ySpeed;
+                        Thread.Sleep(100);//спим
+                        dl();
+                    }
                 }
-                dl();
             }
             public void DrawBall(Graphics dc)
             {
@@ -55,14 +55,14 @@ namespace PodgotovochnayaForma
                 thr.Start();
             }
         }
-        Ball[] bl = new Ball[10];
+        Ball[] bl = new Ball[5];
         public Form1()
         {
             InitializeComponent();
             for (int j = 0; j < bl.Length; j++)
             {
                 //создаем потоковые объекты
-                bl[j] = new Ball(j+1, j * 10, 10, 10, j + 1, j + 1);
+                bl[j] = new Ball(j+1, j * 10, j + 1, j + 1, 10, 10);
                 //подписываемся на событие
                 bl[j].dl += new Ball.DlTp(Invalidate);
             }
@@ -83,10 +83,14 @@ namespace PodgotovochnayaForma
             for (int j = 0; j < bl.Length; j++) {
                 if (new Rectangle(30,30,50,50).IntersectsWith(new Rectangle(bl[j].x, bl[j].y, bl[j].w, bl[j].h))) 
                 {
-                    flag += 1;
+                    flag++;
                     bl[j].inCube = true;
                 }
-                else bl[j].inCube = false;
+                else 
+                {
+                    if (bl[j].inCube) flag--;
+                    bl[j].inCube = false;
+                }
             }
         }
     }
